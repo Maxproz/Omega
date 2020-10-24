@@ -29,6 +29,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
 
+	void DrawDebugCircle(const FVector& StartLocation, bool bHorizontal);
+
+	// You scale varables that will change something by delta time, end that varable becomes change per second
+	virtual void Tick(float DeltaTime) override;
+
 protected:
 
 	/** Resets HMD orientation in VR. */
@@ -68,5 +73,10 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+
+private:
+
+	bool bHasDrawnDebugCircle = false;
 };
 

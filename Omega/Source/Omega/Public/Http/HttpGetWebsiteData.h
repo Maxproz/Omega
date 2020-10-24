@@ -3,34 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/PlayerController.h"
-
-//#include "Omega/Public/Http/HttpGetWebsiteData.h"
-
 #include "Core.h"
 #include "Http.h"
 #include "HttpModule.h"
 
-#include "OmegaPlayerController.generated.h"
-
-
 /**
- * 
+ * Test an Http request to a specified endpoint Url
  */
-UCLASS()
-class OMEGA_API AOmegaPlayerController : public APlayerController
+class FHttpGetWebsiteData
 {
-	GENERATED_BODY()
-	
 public:
-	virtual void BeginPlay();
-
-	
-	//class FHttpGetWebsiteData* HTTPDATA;
-
-
-
-	public:
 
 	/**
 	 * Constructor
@@ -40,7 +22,7 @@ public:
 	 * @param Url - url address to connect to
 	 * @param InIterations - total test iterations to run
 	 */
-	//FHttpGetWebsiteData(const FString& InVerb, const FString& InPayload, const FString& InUrl, int32 InIterations);
+	FHttpGetWebsiteData(const FString& InVerb, const FString& InPayload, const FString& InUrl, int32 InIterations);
 
 	/**
 	 * Kick off the Http request for the test and wait for delegate to be called
