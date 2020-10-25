@@ -8,6 +8,16 @@
 
 #include "OmegaDebugHelpers.generated.h"
 
+// Notes: Common type of vector is position vectors that have a starting point at the origin. GetActorLocation() probably uses origin as its starting point
+// Notes: Magnitude of a 3d vector is just using the second point and first point and getting sqrt using those two points so  Sqrt((x2 - x1)^2 + (y2-y1)^2 + (z2-z1)^2)
+
+// TODO: DrawDebugVector class?
+
+// TODO: Draw Debug Triangle 
+// You just need 3 points and a color.
+
+// maybe use this as an actor I attach to a player to draw the debug? IDK
+
 USTRUCT()
 struct FOmegaPoint
 {
@@ -20,11 +30,6 @@ public:
 	float Y;
 	float Z;
 };
-
-// TODO: Draw Debug Triangle 
-// You just need 3 points and a color.
-
-// maybe use this as an actor I attach to a player to draw the debug? IDK
 
 UCLASS()
 class AOmegaCircle : public AActor

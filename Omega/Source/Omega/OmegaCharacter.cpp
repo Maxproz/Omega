@@ -11,6 +11,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
 #include "OmegaDebugHelpers.h"
@@ -72,7 +73,7 @@ void AOmegaCharacter::DrawDebugCircle(const FVector& StartLocation, bool bHorizo
 	int32 h = StartLocation.X;			// x coordinate of circle center
  	int32 k = StartLocation.Y;			// y coordinate of circle center
  	int32 StartingZ = StartLocation.Z;	// z coordinate of circle center
- 	int32 radius = 50;
+ 	int32 radius = 300;
 
 	TArray<FVector> Points;
 
@@ -108,35 +109,67 @@ void AOmegaCharacter::DrawDebugCircle(const FVector& StartLocation, bool bHorizo
 
 		if (Index + 1 == Points.Num())
 		{
-			DrawDebugLine(GetWorld(), CurrentPoint, FirstPoint, FColor::Red, true, -1.0f, (uint8)'\000', 3.0f);
+			DrawDebugLine(GetWorld(), CurrentPoint, FirstPoint, FColor::Red, false, -1.0f, (uint8)'\000', 3.0f);
 			break;
 		}
 
 		FVector NextPoint = Points[Index + 1];
 
-		DrawDebugLine(GetWorld(), CurrentPoint, NextPoint, FColor::Red, true, -1.0f, (uint8)'\000', 3.0f);
+		DrawDebugLine(GetWorld(), CurrentPoint, NextPoint, FColor::Red, false, -1.0f, (uint8)'\000', 3.0f);
+	}
+
+	// Code for detecting if another actor is inside the radius of our circle on x and y 
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AOmegaCharacter::StaticClass(), FoundActors);
+	
+	if (FoundActors.Num() == 0)
+	{
+		return;
+	}
+	
+	for (AActor* Actor : FoundActors)
+	{
+		AOmegaCharacter* OmegaCharacter = Cast<AOmegaCharacter>(Actor);
+		if (OmegaCharacter != nullptr)
+		{
+			if (OmegaCharacter == this)
+			{
+				continue;
+			}
+			
+			FVector DistanceBetween = OmegaCharacter->GetActorLocation() - GetActorLocation();
+			//UE_LOG(LogTemp, Warning, TEXT("DistanceBetween: %s "), *DistanceBetween.ToString());
+
+			if (UKismetMathLibrary::Abs(DistanceBetween.X ) < radius && UKismetMathLibrary::Abs(DistanceBetween.Y) < radius)
+			{
+				//UE_LOG(LogTemp, Warning, TEXT("inside, %s"), *OmegaCharacter->GetName());
+				//OmegaCharacter->Destroy(true);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("outside"));
+			}
+		}
 	}
 }
-
-
 
 void AOmegaCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (!bHasDrawnDebugCircle)
-	{
-		bHasDrawnDebugCircle = true;
+// 	if (!bHasDrawnDebugCircle)
+// 	{
+// 		bHasDrawnDebugCircle = true;
+// 
+// 		AOmegaCircle* TempCircle = NewObject<AOmegaCircle>(GetWorld(), AOmegaCircle::StaticClass());
+// 		TempCircle->Initialize(8);
 
-		AOmegaCircle* TempCircle = NewObject<AOmegaCircle>(GetWorld(), AOmegaCircle::StaticClass());
-		TempCircle->Initialize(8);
-
-		UE_LOG(LogTemp, Warning, TEXT("Circumference: %f "), TempCircle->GetCircumference());
+/*		UE_LOG(LogTemp, Warning, TEXT("Circumference: %f "), TempCircle->GetCircumference());*/
 
 		FVector InputLocation = GetActorLocation();
-		InputLocation.X = InputLocation.X + 50;
-		DrawDebugCircle(InputLocation, true);
-	}
+		//InputLocation.X = InputLocation.X + 50;
+		DrawDebugCircle(InputLocation, false);
+	//}
 }
 
 //////////////////////////////////////////////////////////////////////////
