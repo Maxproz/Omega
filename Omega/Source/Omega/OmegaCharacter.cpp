@@ -137,12 +137,15 @@ void AOmegaCharacter::DrawDebugCircle(const FVector& StartLocation, bool bHorizo
 				continue;
 			}
 			
-			FVector DistanceBetween = OmegaCharacter->GetActorLocation() - GetActorLocation();
-			//UE_LOG(LogTemp, Warning, TEXT("DistanceBetween: %s "), *DistanceBetween.ToString());
+			FVector PlayerLocation = GetActorLocation();
+			FVector OtherPlayerLocation = OmegaCharacter->GetActorLocation();
 
-			if (UKismetMathLibrary::Abs(DistanceBetween.X ) < radius && UKismetMathLibrary::Abs(DistanceBetween.Y) < radius)
+			float DistanceBetween = UKismetMathLibrary::Vector_Distance(PlayerLocation, OtherPlayerLocation);
+			UE_LOG(LogTemp, Warning, TEXT("DistanceBetween: %f "), DistanceBetween);
+
+			if (UKismetMathLibrary::Abs(DistanceBetween) < radius)
 			{
-				//UE_LOG(LogTemp, Warning, TEXT("inside, %s"), *OmegaCharacter->GetName());
+				UE_LOG(LogTemp, Warning, TEXT("inside, %s"), *OmegaCharacter->GetName());
 				//OmegaCharacter->Destroy(true);
 			}
 			else
