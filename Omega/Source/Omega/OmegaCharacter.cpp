@@ -118,6 +118,8 @@ void AOmegaCharacter::DrawDebugCircle(const FVector& StartLocation, bool bHorizo
 	}
 }
 
+
+
 void AOmegaCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

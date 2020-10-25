@@ -31,6 +31,7 @@ public:
 
 	void DrawDebugCircle(const FVector& StartLocation, bool bHorizontal);
 
+
 	// You scale varables that will change something by delta time, end that varable becomes change per second
 	virtual void Tick(float DeltaTime) override;
 
