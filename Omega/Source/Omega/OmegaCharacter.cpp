@@ -160,19 +160,34 @@ void AOmegaCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+
+	// BEGIN TEST CIRCLE DEBUG 1
 // 	if (!bHasDrawnDebugCircle)
 // 	{
 // 		bHasDrawnDebugCircle = true;
 // 
-// 		AOmegaCircle* TempCircle = NewObject<AOmegaCircle>(GetWorld(), AOmegaCircle::StaticClass());
-// 		TempCircle->Initialize(8);
+		//AOmegaDebugCircle* TempCircle = NewObject<AOmegaDebugCircle>(GetWorld(), AOmegaDebugCircle::StaticClass());
+		//TempCircle->Initialize(8);
 
 /*		UE_LOG(LogTemp, Warning, TEXT("Circumference: %f "), TempCircle->GetCircumference());*/
 
-		FVector InputLocation = GetActorLocation();
+		//FVector InputLocation = GetActorLocation();
 		//InputLocation.X = InputLocation.X + 50;
-		DrawDebugCircle(InputLocation, false);
+		//DrawDebugCircle(InputLocation, false);
 	//}
+
+// 	AOmegaDebugCircle* TempCircle = NewObject<AOmegaDebugCircle>(GetWorld(), AOmegaDebugCircle::StaticClass());
+// 	TempCircle->Initialize(8);
+// 
+// 	TempCircle->SetActorLocation(FVector(50.0, 330.0, 426.0));
+// 	TempCircle->SetActorRotation(FRotator(0.f, 0.f, 180.f));
+// 
+// 	const FVector CircleLocation = TempCircle->GetActorLocation();
+
+	
+
+
+
 }
 
 //////////////////////////////////////////////////////////////////////////

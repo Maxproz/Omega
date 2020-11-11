@@ -10,13 +10,15 @@
 
 // Notes: Common type of vector is position vectors that have a starting point at the origin. GetActorLocation() probably uses origin as its starting point
 // Notes: Magnitude of a 3d vector is just using the second point and first point and getting sqrt using those two points so  Sqrt((x2 - x1)^2 + (y2-y1)^2 + (z2-z1)^2)
-
-// TODO: DrawDebugVector class?
-
-// TODO: Draw Debug Triangle 
-// You just need 3 points and a color.
-
-// maybe use this as an actor I attach to a player to draw the debug? IDK
+// Notes: distance between 2 vectors is just the magnitude of the vector between 2 points.
+// FORCEINLINE float FVector::Dist(const FVector &V1, const FVector &V2)
+// {
+// 	return FMath::Sqrt(FVector::DistSquared(V1, V2));
+// }
+// FORCEINLINE float FVector::DistSquared(const FVector &V1, const FVector &V2)
+// {
+// 	return FMath::Square(V2.X-V1.X) + FMath::Square(V2.Y-V1.Y) + FMath::Square(V2.Z-V1.Z);
+// }
 
 USTRUCT()
 struct FOmegaPoint
@@ -24,20 +26,135 @@ struct FOmegaPoint
 public:
 	GENERATED_BODY()
 
-	FOmegaPoint() {}
+	FOmegaPoint() 
+	: X(0.f), Y(0.f), Z(0.f)
+	{}
 
 	float X;
 	float Y;
 	float Z;
 };
 
+// TODO: DrawDebugVector class?
 UCLASS()
-class AOmegaCircle : public AActor
+class AOmegaDebugVector : public AActor
+{
+public:
+	GENERATED_BODY()
+	
+	AOmegaDebugVector() 
+		: Magnitude(0.f)
+	{}
+
+	AOmegaDebugVector(const float& InX, const float& InY, const float& InZ, const float& InMagnitude)
+	{
+		Direction.X = InX;
+		Direction.Y = InY;
+		Direction.Z = InZ;
+
+		Magnitude = InMagnitude;
+	}
+
+	AOmegaDebugVector(const FOmegaPoint& InPoint, const float& InMagnitude)
+	{
+		Direction.X = InPoint.X;
+		Direction.Y = InPoint.Y;
+		Direction.Z = InPoint.Z;
+
+		Magnitude = InMagnitude;
+	}
+
+protected:
+
+private:
+	FOmegaPoint Direction; 
+	float Magnitude;
+};
+
+
+// TODO: Draw Debug Triangle 
+// You just need 3 points and a color.
+UCLASS()
+class AOmegaDebugTriangle : public AActor
 {
 public:
 	GENERATED_BODY()
 
-	AOmegaCircle()
+	AOmegaDebugTriangle() {}
+
+	AOmegaDebugTriangle(const FOmegaPoint& FirstPoint, const FOmegaPoint& SecondPoint, const FOmegaPoint& ThirdPoint, const FColor InColor)
+	{
+		PointA = FirstPoint;
+		PointB = SecondPoint;
+		PointC = ThirdPoint;
+
+		LineColor = InColor;
+	}
+protected:
+
+private:
+	FOmegaPoint PointA;
+	FOmegaPoint PointB;
+	FOmegaPoint PointC;
+
+	FColor LineColor;
+};
+
+
+// VECTORS
+// Normalize turns a vector into a unit vector. Makes it easier to work with.
+// Divide each component (x,y,z) by the vectors magnitude.
+// only true when vector != zero vector at origin/zero velocity standing still
+
+// Dot product is a percentage of similarity / dissimilarity between two vectors.
+// The dot product of two vectors can be used to find the angle between two vectors.
+// DotProduct(a,b) = magnitude(a)*magnitude(b) * cos(theta)
+// if you converted to unit vectors the divisor cancels out ---- theta = acos(DotProduct(a,b) / (Magnitude(a) * Magnitude(b)))
+
+// Using DotProduct to see if player is behind enemy.
+// Get Enemy position 
+// FVector EnemyPosition = Enemy->GetActorLocation();
+// FVector EnemyForwardVector = Enemy->GetForwardVector(); == They are facing forward on the x axis FVector(1, 0, 0);
+
+// Enemy also knows the vector to the player
+// FVector PlayerPosition = Player->GetActorLocation();
+// FVector EnemyToPlayerVector = EnemyPosition - PlayerPosition; // FVector(-3, 4, 0)
+// Also Enemy vision CONE is 90 degrees total so 45 degrees to either side of our forward vector // NEXT TODO: How do I calculate these angles
+
+// So using this information.
+// You know which direction the enemy is facing, know the enemys vision cone angles
+// You can use the dot product formula to get the angle of the player compared to the enemys forward vector and if that angle is within their vision cone angle they can be fired on 
+// You an also use this by checking the players angle, the closer the players angle is to 180 the more the player is directly behind the enemy.
+
+
+// Cross product of 2 vectors is the vector that is perpendicular to the 2 vectors.
+// This vector is the "normal" of those 2 vectors.
+
+// For ue4 example - the normal vector you would get from the crossproduct(x, y); would be the the normal to the x y plane
+
+// CrossProduct(x, y) == CrossProduct(-y, x) 
+// If you want to point your normal vector in the opposite direction change the order of the cross product variables.
+
+
+// REFLECTION
+// To do reflection 
+// #1 Get the normal of a surface(plane) using cross product
+// #2 Pass in the incoming vector and normal vector into FVector.Reflect
+
+// TASK: Find more uses for project onto plane.
+// given example was showing how you can prevent a car from stopping completely when it hits a railing
+// Output vector = FVector::ProjectOntoPlane(input vector, normal vector)
+
+
+
+
+UCLASS()
+class AOmegaDebugCircle : public AActor
+{
+public:
+	GENERATED_BODY()
+
+	AOmegaDebugCircle()
 	{
 
 	}

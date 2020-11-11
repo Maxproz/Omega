@@ -28,6 +28,10 @@ public:
 
 	void DrawDebugTurretAim(const FVector& StartLocation);
 
+
+	// The aim cone is 45 degrees in both directions from our forward vector.
+	void DrawDebugAimCone();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

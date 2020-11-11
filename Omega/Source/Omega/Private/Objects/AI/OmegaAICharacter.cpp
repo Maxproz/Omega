@@ -8,14 +8,19 @@
 #include "Components/InputComponent.h"
 #include "Components/WidgetComponent.h"
 #include "DrawDebugHelpers.h"
+#include "EngineUtils.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+
+#include "../OmegaCharacter.h"
 
 // Sets default values
 AOmegaAICharacter::AOmegaAICharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	RootComponent = GetCapsuleComponent();
 
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -50,7 +55,9 @@ void AOmegaAICharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 
-	DrawDebugTurretAim(GetActorLocation());
+	//DrawDebugTurretAim(GetActorLocation());
+
+	DrawDebugAimCone();
 }
 
 // Called to bind functionality to input
@@ -93,4 +100,49 @@ void AOmegaAICharacter::DrawDebugTurretAim(const FVector& StartLocation)
 	DrawDebugLine(GetWorld(), TurretStartLocation, ForwardShotVector, FColor::Red, true, -1.0f, (uint8)'\000', 2);
 	DrawDebugLine(GetWorld(), ForwardShotVector, OppositeSideVector, FColor::Red, true, -1.0f, (uint8)'\000', 2);
 	DrawDebugLine(GetWorld(), OppositeSideVector, StartLocation, FColor::Red, true, -1.0f, (uint8)'\000', 2);
+}
+
+void AOmegaAICharacter::DrawDebugAimCone()
+{
+	const FVector ActorLocation = GetActorLocation();
+	
+	AOmegaCharacter* NearestPlayer = nullptr;
+
+	float LastClosestDistance = 0.f;
+	bool FoundOneCharacter = false;
+	for (TActorIterator<AOmegaCharacter> OmegaCharacterIter(GetWorld()); OmegaCharacterIter; ++OmegaCharacterIter)
+	{
+		float DistanceToUs = FVector::Distance(ActorLocation, (*(*OmegaCharacterIter)).GetActorLocation());
+		
+		if (!FoundOneCharacter)
+		{
+			LastClosestDistance = DistanceToUs;
+			NearestPlayer = *OmegaCharacterIter;
+		}
+
+		FoundOneCharacter = true;
+
+		if (DistanceToUs < LastClosestDistance && LastClosestDistance != 0.f)
+		{
+			LastClosestDistance = DistanceToUs;
+			NearestPlayer = *OmegaCharacterIter;
+		}
+	}
+
+	if (NearestPlayer == nullptr)
+	{
+		return;
+	}
+
+	// Now we have a safe pointer to our closest player
+	//UE_LOG(LogTemp, Warning, TEXT("Closest Player Location: %s "), *NearestPlayer->GetActorLocation().ToString());
+
+	const FVector VectorToNearestPlayer = ActorLocation - (ActorLocation - NearestPlayer->GetActorLocation());
+	
+
+	DrawDebugLine(GetWorld(), ActorLocation, VectorToNearestPlayer, FColor::Red, false, 0.1f, (uint8)'\000', 2);
+	DrawDebugLine(GetWorld(), ActorLocation, ActorLocation + (GetActorForwardVector() * 300), FColor::Blue, false, 0.1f, (uint8)'\000', 2);
+
+
+
 }
